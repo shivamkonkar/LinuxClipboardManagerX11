@@ -21,7 +21,7 @@ def on_activate():
         return
     
     # Run main.py in a separate process and store its PID
-    process = subprocess.Popen(["python3", "main.py"])
+    process = subprocess.Popen(["python3", "gui.py"])
     with open(PID_FILE, "w") as f:
         f.write(str(process.pid))
 
@@ -32,5 +32,4 @@ def listen_for_hotkey():
 
 if __name__ == "__main__":
     listen_for_hotkey()
-
 

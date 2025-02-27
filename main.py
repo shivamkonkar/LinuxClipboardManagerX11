@@ -5,7 +5,7 @@ import signal
 from PyQt5.QtWidgets import QApplication
 from daemon import clipboard_listener
 from hotkey import listen_for_hotkey
-from gui import ClipboardHistory  # Import the PyQt5 window
+from gui import ClipboardUI # Import the PyQt5 window
 
 PID_FILE = "/tmp/clipboard_manager.pid"
 
@@ -18,7 +18,7 @@ def cleanup_and_exit():
 def run_gui():
     """Start the PyQt5 GUI."""
     app = QApplication(sys.argv)
-    window = ClipboardHistory()
+    window = ClipboardUI()
 
     # ✅ Ensure PID file is deleted when window is closed
     def close_event():
