@@ -4,7 +4,7 @@ A simple clipboard manager for Linux that runs in the background, supports hotke
 
 ## Features
 - Runs as a background daemon
-- Listens for a hotkey (`Win + Alt` by default) to manage clipboard history
+- Listens for a hotkey (`super + v` by default) to manage clipboard history
 - Logs clipboard data for easy retrieval
 - Uses Python with a virtual environment
 - Automatically starts at system boot using `systemd`
