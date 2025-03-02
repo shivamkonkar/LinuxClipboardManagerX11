@@ -1,60 +1,94 @@
-# LinuxClipboardManagerX11
+# Clipboard Manager for Linux
 
-## 📌 About
+A simple clipboard manager for Linux that runs in the background, supports hotkeys, and logs clipboard history.
 
-LinuxClipboardManagerX11 is a simple yet powerful clipboard manager for Linux, built using **Python** and **PyQt5**. It provides clipboard history management with a user-friendly GUI and global hotkey support (**Win+V**). The project is optimized for **X11**, ensuring smooth operation with NVIDIA GPUs and better clipboard access.
+## Features
+- Runs as a background daemon
+- Listens for a hotkey (`Win + Alt` by default) to manage clipboard history
+- Logs clipboard data for easy retrieval
+- Uses Python with a virtual environment
+- Automatically starts at system boot using `systemd`
 
-🚧 **Work in Progress** 🚧
-This project is still under development, and features will be added progressively.
+## Installation
 
-## ✨ Features
-
-- Clipboard history management
-- **Global hotkey support** (Win+V) using `pynput`
-- **PyQt5 GUI** for a modern and professional look
-- **Background daemon process** for clipboard monitoring
-- Works on **Linux Mint Cinnamon 22.1 “Xia”** and other X11-based Linux distributions
-
-## 📦 Installation
-
-### 1️⃣ Install dependencies
-
-```sh
-sudo apt update && sudo apt install xclip -y
-pip3 install PyQt5 pynput daemonize
+### 1️⃣ Clone the Repository
+```bash
+cd ~/Documents
+git clone <your-repo-url> clipboard
+cd clipboard
 ```
 
-### 2️⃣ Clone the repository
-
-```sh
-git clone https://github.com/shivamkonkar/LinuxClipboardManagerX11.git
-cd LinuxClipboardManagerX11
+### 2️⃣ Set Up the Virtual Environment
+```bash
+python3 -m venv myenv
+source myenv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 3️⃣ Run the Clipboard Manager
-
-```sh
-python3 main.py
+### 3️⃣ Make the Scripts Executable
+```bash
+chmod +x start_clipboard_manager.sh
+touch ~/.clipboard_manager_logs/debug.log
 ```
 
-## 🛠️ Technologies Used
+### 4️⃣ Configure Systemd to Run at Startup
 
-- **Python 3.12**
-- **PyQt5** (for GUI)
-- **pynput** (for global hotkeys)
-- **daemonize** (for running in the background)
-- **xclip** (for clipboard access in X11)
+Create a `systemd` service:
+```bash
+sudo nano /etc/systemd/system/clipboard.service
+```
 
-## ⚠️ Notes on X11 vs Wayland
+Add the following content:
+```ini
+[Unit]
+Description=Clipboard Manager Startup
+After=network.target
 
-- **X11 is chosen** for better NVIDIA GPU support, clipboard access, and global hotkeys
-- **Wayland limitations:**
-  - Clipboard persistence issues
-  - Strict security restrictions on global hotkeys
-  - Inconsistent NVIDIA driver support
+[Service]
+User=shivam
+WorkingDirectory=/home/shivam/Documents/clipboard
+ExecStart=/bin/bash /home/shivam/Documents/clipboard/start_clipboard_manager.sh
+Restart=always
+RestartSec=5s
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/shivam/.Xauthority"
 
-## 🤝 Contributing
+[Install]
+WantedBy=default.target
+```
 
-Contributions are welcome! If you'd like to improve the project, feel free to open an issue or submit a pull request.
+### 5️⃣ Enable & Start the Service
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable clipboard.service
+sudo systemctl start clipboard.service
+```
 
-##
+## Usage
+The clipboard manager will run automatically at startup. You can manually start or stop it using:
+```bash
+systemctl start clipboard.service
+systemctl stop clipboard.service
+systemctl restart clipboard.service
+systemctl status clipboard.service
+```
+
+## Debugging
+If the service is not working, check logs:
+```bash
+tail -f ~/.clipboard_manager_logs/debug.log
+journalctl -u clipboard.service --no-pager --lines=50
+```
+
+## Uninstallation
+To remove the clipboard manager:
+```bash
+sudo systemctl stop clipboard.service
+sudo systemctl disable clipboard.service
+sudo rm /etc/systemd/system/clipboard.service
+rm -rf ~/Documents/clipboard ~/.clipboard_manager_logs
+```
+
+## License
+MIT License
+
